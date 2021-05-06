@@ -3,11 +3,41 @@ html {
   scroll-behavior: smooth;
 }
 
+@font-face {
+  font-family: "Gordita Bold";
+  font-style: normal;
+  font-weight: normal;
+  src: local("Gordita Bold"), url("./font/Gordita\ Bold.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Gordita";
+  font-style: normal;
+  font-weight: normal;
+  src: local("Gordita Medium"),
+    url("./font/Gordita\ Medium.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Gordita Regular";
+  font-style: normal;
+  font-weight: normal;
+  src: local("Gordita Regular"),
+    url("./font/Gordita\ Regular.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Gordita Light";
+  font-style: normal;
+  font-weight: normal;
+  src: local("Gordita Light"), url("./font/Gordita\ Light.woff") format("woff");
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
+  font-family: "Gordita", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+    "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

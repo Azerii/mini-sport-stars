@@ -1,6 +1,7 @@
 * {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
 input:focus {
@@ -86,4 +87,20 @@ ul {
 
 .textCapitalize {
   text-transform: capitalize;
+}
+
+.textLight {
+  font-family: Gordita Light;
+}
+
+.textRegular {
+  font-family: Gordita Regular;
+}
+
+.textMedium {
+  font-family: Gordita;
+}
+
+.textBold {
+  font-family: Gordita Bold;
 }

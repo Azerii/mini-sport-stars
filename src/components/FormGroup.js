@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import { chevronDown } from "../assets";
@@ -100,6 +100,7 @@ const FormGroup = ({
   placeholder,
   required = true,
   options = [],
+  defaultValue,
 }) => {
   const [showLabel, setShowLabel] = useState(false);
 
@@ -110,6 +111,12 @@ const FormGroup = ({
       setShowLabel(false);
     }
   };
+
+  useEffect(() => {
+    if (defaultValue) {
+      setShowLabel(true);
+    }
+  }, [defaultValue]);
 
   return (
     <Wrapper className={className} fieldStyle={fieldStyle}>
@@ -124,6 +131,7 @@ const FormGroup = ({
             onBlur={toggleLabel}
             onChange={toggleLabel}
             required={required || false}
+            defaultValue={defaultValue}
           />
           {showLabel && <label htmlFor={name}>{placeholder}</label>}
           {inputType === "password" && (
@@ -144,6 +152,7 @@ const FormGroup = ({
             name={name}
             placeholder={placeholder}
             required={required || false}
+            defaultValue={defaultValue}
           />
           {showLabel && <label htmlFor={name}>{placeholder}</label>}
         </>
@@ -160,6 +169,7 @@ const FormGroup = ({
             onBlur={toggleLabel}
             onChange={toggleLabel}
             required={required || false}
+            defaultValue={defaultValue}
           >
             <option value="" disabled selected hidden>
               {placeholder}

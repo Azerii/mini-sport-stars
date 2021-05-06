@@ -13,6 +13,7 @@ const Box = styled.div`
   background-color: #ffffff;
   height: 1.8rem;
   width: 1.8rem;
+  padding: 0.3rem;
   border: 2px solid ${(props) => (props.grey ? "#899198" : "#000000")};
   border-radius: ${(props) => (props.circle ? "100%" : "2px")};
   cursor: pointer;
@@ -23,7 +24,7 @@ const Box = styled.div`
 
   .checkedIcon {
     display: ${(props) => (props.checked ? "block" : "none")};
-    height: 1rem;
+    height: 100%;
     pointer-events: none;
     filter: ${(props) => (props.grey ? greyFilter : "unset")};
   }
@@ -34,7 +35,7 @@ const handleClick = (id) => {
   checkboxInput.click();
 };
 
-const CheckBox = ({ name, grey, circle }) => {
+const CheckBox = ({ className, name, grey, circle }) => {
   const [checked, setChecked] = useState(false);
 
   return (
@@ -43,6 +44,7 @@ const CheckBox = ({ name, grey, circle }) => {
       circle={circle}
       checked={checked}
       onClick={() => handleClick(name)}
+      className={className}
     >
       <input
         type="checkbox"
@@ -57,6 +59,8 @@ const CheckBox = ({ name, grey, circle }) => {
 };
 
 CheckBox.propTypes = {
+  id: PropTypes.string,
+  className: PropTypes.string,
   name: PropTypes.string,
   grey: PropTypes.bool,
   circle: PropTypes.bool,

@@ -32,6 +32,12 @@ const SignUp = () => {
           name="email_address"
           placeholder="Email address"
         />
+        <FormGroup
+          fieldStyle="shortText"
+          inputType="number"
+          name="phone_number"
+          placeholder="Phone number"
+        />
         <Spacer y={2.4} />
         <FormGroup
           fieldStyle="shortText"

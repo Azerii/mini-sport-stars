@@ -13,6 +13,8 @@ const Box = styled.div`
   background-color: #ffffff;
   position: fixed;
   top: -7rem;
+  left: 50%;
+  transform: translateX(-50%);
   opacity: 0;
   pointer-events: none;
   transition: all 250ms ease-in;
@@ -25,8 +27,7 @@ const Box = styled.div`
 
   .text {
     color: #000000;
-    font-family: DM Sans;
-    font-size: 18px;
+    font-size: 16px;
     font-style: normal;
     font-weight: 400;
     line-height: 27px;

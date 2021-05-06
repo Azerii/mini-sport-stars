@@ -13,7 +13,6 @@ const Wrapper = styled.button`
   padding: 0 3.6rem;
   background-color: ${(props) => (props.disabled ? "#D9D9D9" : "#cd2853")};
   color: #ffffff;
-  font-family: Eudoxus Sans;
   font-size: 16px;
   font-style: normal;
   font-weight: 700;
