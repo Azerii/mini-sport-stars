@@ -1,5 +1,5 @@
 import "./App.css";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Redirect, Route } from "react-router-dom";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import AddChild from "./pages/AddChild";
@@ -21,6 +21,13 @@ function App() {
         <Route path="/terms-and-conditions" component={TermsAndConditions} />
 
         {/* Dashboard */}
+        <Route
+          exact
+          path="/"
+          component={() => {
+            return <Redirect to="/dashboard" />;
+          }}
+        />
         <Route path="/dashboard" component={DashboardLayout} />
 
         {/* Admin */}
