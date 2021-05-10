@@ -175,11 +175,11 @@ const ageGroups = [
   "Year 6",
 ];
 
-const hideDropDown = () => {
-  document
-    .querySelectorAll(".dropdown")
-    .forEach((el) => el.classList.remove("open"));
-};
+// const hideDropDown = () => {
+//   document
+//     .querySelectorAll(".dropdown")
+//     .forEach((el) => el.classList.remove("open"));
+// };
 
 const toggleDropdown = (selector) => {
   const target = document.querySelector(selector);
@@ -229,8 +229,7 @@ const Filter = ({ column = {} }) => {
               {dates.map((item) => (
                 <li key={item.text} className="item">
                   <button
-                    className="btn"
-                    className={`${
+                    className={`btn ${
                       item.text === filterValue ? "active" : "static"
                     }`}
                     onClick={(e) => handleSelect(e, item.text)}
