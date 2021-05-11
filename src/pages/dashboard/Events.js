@@ -12,9 +12,12 @@ import {
   saturdayMorningFootball,
   trialDays,
 } from "../../assets";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Route, useHistory } from "react-router";
 import { Link } from "react-router-dom";
+import { store } from "../../redux/store";
+import { connect } from "react-redux";
+import { getChildren, setEvent } from "../../redux/actions";
 
 const Wrapper = styled.div`
   display: grid;
@@ -273,13 +276,32 @@ const tempChildren = [
   "Dibie Esther",
 ];
 
-const activities = [
-  "Reception / Year 1 Football",
-  "Year 2 / Year 3 Football",
-  "Year 4 / Year 5 / Year 6 Football",
-  "Mums’ Football",
-  "Dads’ Football",
-];
+const activities = {
+  "saturday morning football": [
+    {
+      activity: "Reception / Year 1 Football",
+      price: 8,
+    },
+    {
+      activity: "Year 2 / Year 3 Football",
+      price: 8,
+    },
+    {
+      activity: "Year 4 / Year 5 / Year 6 Football",
+      price: 8,
+    },
+  ],
+  "half term": [
+    {
+      activity: "Single day",
+      price: 30,
+    },
+    {
+      activity: "5 days",
+      price: 140,
+    },
+  ],
+};
 
 const checkoutDetails = [
   {
@@ -299,9 +321,9 @@ const checkoutDetails = [
   },
 ];
 
-const Event = ({ href, imgSrc, title, desc }) => {
+const Event = ({ href, imgSrc, title, desc, setEvent }) => {
   return (
-    <Card to={href}>
+    <Card to={href} onClick={() => setEvent(title.toLowerCase())}>
       <div className="imgWrapper">
         {imgSrc && <img src={imgSrc} alt={title} />}
       </div>
@@ -313,7 +335,7 @@ const Event = ({ href, imgSrc, title, desc }) => {
   );
 };
 
-const Events = () => {
+const Events = (props) => {
   const history = useHistory();
   const [events] = useState(tempEvents);
 
@@ -329,6 +351,12 @@ const Events = () => {
 
     history.push(target);
   };
+
+  useEffect(() => {
+    getChildren();
+
+    // eslint-disable-next-line
+  }, []);
 
   return (
     <>
@@ -347,6 +375,7 @@ const Events = () => {
               title={item.title}
               desc={item.desc}
               href="/dashboard/events/register"
+              {...props}
             />
           ))}
         <Spacer y={4.8} />
@@ -385,7 +414,7 @@ const Events = () => {
                       <CheckBox
                         className="checkBox"
                         id={`child_${index + 1}`}
-                        name={`child_${index + 1}`}
+                        name={store.getState().current_event}
                         circle
                         grey
                       />
@@ -418,13 +447,14 @@ const Events = () => {
               onSubmit={(e) => handleSubmit(e, "/dashboard/events/payment")}
             >
               {activities &&
-                activities.map((activity, index) => (
+                activities[props.current_event] &&
+                activities[props.current_event].map((item, index) => (
                   <div key={`class_${index + 1}`}>
                     <div
                       className="listItem"
                       onClick={(e) => handleSelect(e, `class_${index + 1}`)}
                     >
-                      <span className="label">{activity}</span>
+                      <span className="label">{item.activity}</span>
                       <CheckBox
                         className="checkBox"
                         id={`class_${index + 1}`}
@@ -500,4 +530,16 @@ Event.propTypes = {
   href: PropTypes.string.isRequired,
 };
 
-export default Events;
+const mapStateToProps = (state) => {
+  return {
+    current_event: state.current_event,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setEvent: (title) => dispatch(setEvent(title)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Events);

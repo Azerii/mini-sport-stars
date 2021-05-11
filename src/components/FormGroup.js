@@ -171,7 +171,7 @@ const FormGroup = ({
             required={required || false}
             defaultValue={defaultValue}
           >
-            <option value="" disabled selected hidden>
+            <option value="" hidden>
               {placeholder}
             </option>
             {options.map((option) => (

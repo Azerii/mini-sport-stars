@@ -36,6 +36,7 @@ const Button = ({
   color,
   as,
   href,
+  onClick,
 }) => {
   const styleProps = {
     className,
@@ -47,6 +48,7 @@ const Button = ({
     color,
     as,
     href,
+    onClick,
   };
   return <Wrapper {...styleProps}>{text}</Wrapper>;
 };

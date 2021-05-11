@@ -1,4 +1,4 @@
-import { Route, Switch } from "react-router";
+import { Redirect, Route, Switch } from "react-router";
 import { NavLink } from "react-router-dom";
 import styled from "styled-components";
 import {
@@ -10,6 +10,7 @@ import {
 import Events from "../../pages/dashboard/Events";
 import Home from "../../pages/dashboard/Home";
 import Profile from "../../pages/dashboard/Profile";
+import { store } from "../../redux/store";
 import { blackFilter } from "../../utils";
 import Logo from "../Logo";
 import Spacer from "../Spacer";
@@ -68,6 +69,9 @@ const Content = styled.div`
 `;
 
 const DashboardLayout = () => {
+  if (!store.getState().children.length) {
+    return <Redirect to="/add-child" />;
+  }
   return (
     <>
       <Header>
@@ -107,7 +111,12 @@ const DashboardLayout = () => {
             <span>Profile</span>
           </NavLink>
           <Spacer y={1.2} />
-          <a href="/sign-in" className="item" activeClassName="active">
+          <a
+            href="/sign-in"
+            className="item"
+            activeClassName="active"
+            onClick={() => localStorage.clear()}
+          >
             <img src={logout} alt="Home Icon" className="icon" />
             <Spacer x={1.2} />
             <span>logout</span>

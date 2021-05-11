@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { useHistory } from "react-router";
 import AuthWrapper from "../components/AuthWrapper";
 import Button from "../components/Button";
 import Caption from "../components/Caption";
@@ -5,8 +7,34 @@ import FormGroup from "../components/FormGroup";
 import Logo from "../components/Logo";
 import PromptText from "../components/PromptText";
 import Spacer from "../components/Spacer";
+import { registerUser } from "../redux/actions";
+import { formDataToJSON } from "../utils";
 
 const SignUp = () => {
+  const history = useHistory();
+  const [loading, setLoading] = useState(false);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+    const data_JSON = formDataToJSON(formData);
+
+    setLoading(true);
+
+    let res = await registerUser(data_JSON);
+
+    if (res && res.status === "success") {
+      setLoading(false);
+      history.push("/sign-in");
+      console.log(res);
+    } else if (res && res.status === "error") {
+      setLoading(false);
+      alert(res.message);
+    } else {
+      setLoading(false);
+      alert("Something went wrong");
+    }
+  };
   return (
     <AuthWrapper>
       <Spacer y={4.8} />
@@ -18,7 +46,7 @@ const SignUp = () => {
         align="center"
       />
       <Spacer y={4.2} />
-      <form>
+      <form onSubmit={handleSubmit}>
         <FormGroup
           fieldStyle="shortText"
           inputType="text"
@@ -29,9 +57,10 @@ const SignUp = () => {
         <FormGroup
           fieldStyle="shortText"
           inputType="email"
-          name="email_address"
+          name="email"
           placeholder="Email address"
         />
+        <Spacer y={2.4} />
         <FormGroup
           fieldStyle="shortText"
           inputType="number"
@@ -58,11 +87,15 @@ const SignUp = () => {
           className="password"
           fieldStyle="shortText"
           inputType="password"
-          name="confirm_password"
+          name="confirmation_password"
           placeholder="Confirm Password"
         />
         <Spacer y={4.8} />
-        <Button text="Register" fullWidth />
+        <Button
+          text={loading ? "..." : "Register"}
+          disabled={loading}
+          fullWidth
+        />
         <Spacer y={2.4} />
         <PromptText
           prompt={`Already have an account?`}

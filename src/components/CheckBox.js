@@ -35,7 +35,7 @@ const handleClick = (id) => {
   checkboxInput.click();
 };
 
-const CheckBox = ({ className, name, grey, circle }) => {
+const CheckBox = ({ className, name, grey, circle, required = false }) => {
   const [checked, setChecked] = useState(false);
 
   return (
@@ -52,6 +52,7 @@ const CheckBox = ({ className, name, grey, circle }) => {
         id={name}
         value={checked}
         onChange={() => setChecked(!checked)}
+        required={required}
       />
       <img src={checkedIcon} alt="check" className="checkedIcon" />
     </Box>
@@ -64,6 +65,7 @@ CheckBox.propTypes = {
   name: PropTypes.string,
   grey: PropTypes.bool,
   circle: PropTypes.bool,
+  required: PropTypes.bool,
 };
 
 export default CheckBox;

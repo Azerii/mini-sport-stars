@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { useHistory } from "react-router";
 import styled from "styled-components";
 import { plus } from "../assets";
 import AlertBox from "../components/AlertBox";
@@ -7,6 +9,8 @@ import Caption from "../components/Caption";
 import FormGroup from "../components/FormGroup";
 import Logo from "../components/Logo";
 import Spacer from "../components/Spacer";
+import { addChildren } from "../redux/actions";
+import { formDataToJSON } from "../utils";
 
 const AddAnother = styled.button`
   display: flex;
@@ -25,17 +29,57 @@ const AddAnother = styled.button`
   }
 `;
 
-const addAnotherChild = (e) => {
-  e.preventDefault();
-
-  document.querySelector(".alertBox").classList.add("show");
-  setTimeout(
-    () => document.querySelector(".alertBox").classList.remove("show"),
-    3000
-  );
-};
-
 const AddChild = () => {
+  const history = useHistory();
+  const [loading, setLoading] = useState(false);
+  const [addMore, setAddMore] = useState(false);
+  const children = [];
+
+  const handleSubmit = async (e) => {
+    let formEl;
+    if (e) {
+      e.preventDefault();
+      formEl = e.target;
+    } else {
+      formEl = document.querySelector("#addChildForm");
+    }
+
+    const formData = new FormData(formEl);
+    const data_JSON = formDataToJSON(formData);
+
+    children.push(data_JSON);
+
+    setLoading(true);
+
+    let res = await addChildren({ children });
+
+    if (res && res.status === "success") {
+      setLoading(false);
+      document.querySelector(".alertBox").classList.add("show");
+      if (addMore) {
+        setTimeout(() => {
+          document.querySelector(".alertBox").classList.remove("show");
+          window.location.reload();
+        }, 3000);
+      } else {
+        setTimeout(() => {
+          document.querySelector(".alertBox").classList.remove("show");
+          history.push("/terms-and-conditions");
+        }, 3000);
+      }
+    } else if (res && res.status === "error") {
+      setLoading(false);
+      alert(res.message);
+    } else {
+      setLoading(false);
+      alert("Something went wrong");
+    }
+  };
+
+  const addAnotherChild = () => {
+    setAddMore(true);
+  };
+
   return (
     <AuthWrapper>
       <AlertBox className="alertBox" text="Child saved successfully" />
@@ -48,17 +92,23 @@ const AddChild = () => {
         align="center"
       />
       <Spacer y={4.2} />
-      <form>
+      <form id="addChildForm" onSubmit={handleSubmit}>
         <FormGroup
           fieldStyle="shortText"
           inputType="text"
-          name="child_name"
+          name="name"
           placeholder="Child name"
         />
         <Spacer y={2.4} />
         <FormGroup
+          fieldStyle="shortText"
+          inputType="number"
+          name="age"
+          placeholder="Child age"
+        />
+        {/* <FormGroup
           fieldStyle="dropdown"
-          name="child_age"
+          name="age"
           placeholder="Child age"
           options={[
             "1yr",
@@ -79,7 +129,7 @@ const AddChild = () => {
             "16yrs",
             "17yrs",
           ]}
-        />
+        /> */}
         <Spacer y={2.4} />
         <FormGroup
           fieldStyle="dropdown"
@@ -103,13 +153,18 @@ const AddChild = () => {
           options={["Male", "Female"]}
         />
         <Spacer y={2.4} />
-        <AddAnother onClick={addAnotherChild}>
+        <AddAnother type="submit" onClick={addAnotherChild}>
           <img src={plus} alt="Plus" className="plusIcon" />
           <Spacer x={1.2} />
           <span>Add another child</span>
         </AddAnother>
         <Spacer y={4.8} />
-        <Button text="Finish" fullWidth disabled />
+        <Button
+          type="submit"
+          text={loading ? "..." : "Finish"}
+          fullWidth
+          disabled={loading}
+        />
         <Spacer y={2.4} />
         <a href="/terms-and-conditions" className="skip textUnderline">
           Skip

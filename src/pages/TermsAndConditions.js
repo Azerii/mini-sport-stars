@@ -1,3 +1,4 @@
+import { useHistory } from "react-router";
 import styled from "styled-components";
 import Button from "../components/Button";
 import Caption from "../components/Caption";
@@ -34,6 +35,18 @@ const Wrapper = styled.div`
 `;
 
 const TermsAndConditions = () => {
+  const history = useHistory();
+  const handleContinue = () => {
+    const checkbox_one = document.querySelector(`input[name="readAndAgreed"]`);
+    const checkbox_two = document.querySelector(`input[name="photoConsent"]`);
+
+    if (checkbox_one.checked && checkbox_two.checked) {
+      history.push("/");
+    } else {
+      alert("Please check both boxes to continue");
+    }
+  };
+
   return (
     <Wrapper>
       <Spacer y={4.8} />
@@ -56,31 +69,28 @@ const TermsAndConditions = () => {
         future clubs.
       </p>
       <Spacer y={4.8} />
-      <form className="fullWidth">
-        <div className="flex-row fullWidth">
-          <CheckBox name="readAndAgreed" />
-          <Spacer x={1.2} />
-          <span className="prompt">
-            I have read and agreed to the above Terms &amp; Conditions
-          </span>
-        </div>
-        <Spacer y={1.2} />
-        <div className="flex-row fullWidth">
-          <CheckBox name="photoConsent" />
-          <Spacer x={1.2} />
-          <span className="prompt">
-            I give photo consent for Mini Sports Stars social platforms
-          </span>
-        </div>
-        <Spacer y={1.2} />
-        <p className="content fullWidth">
-          NB: Bookings will not be valid without confirmation of the Terms &
-          Conditions
-        </p>
-        <Spacer y={4.8} />
-        <Button text="Continue" width="50%" />
-      </form>
-
+      <div className="flex-row fullWidth">
+        <CheckBox name="readAndAgreed" required />
+        <Spacer x={1.2} />
+        <span className="prompt">
+          I have read and agreed to the above Terms &amp; Conditions
+        </span>
+      </div>
+      <Spacer y={1.2} />
+      <div className="flex-row fullWidth">
+        <CheckBox name="photoConsent" required />
+        <Spacer x={1.2} />
+        <span className="prompt">
+          I give photo consent for Mini Sports Stars social platforms
+        </span>
+      </div>
+      <Spacer y={1.2} />
+      <p className="content fullWidth">
+        NB: Bookings will not be valid without confirmation of the Terms &
+        Conditions
+      </p>
+      <Spacer y={4.8} />
+      <Button text="Continue" width="50%" onClick={handleContinue} />
       <Spacer y={4.8} />
     </Wrapper>
   );
