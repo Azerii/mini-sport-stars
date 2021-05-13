@@ -1,6 +1,12 @@
 import axios from "axios";
 import { store } from "../store";
-import { SET_CHILDREN, SET_EVENT, SET_TOKEN } from "./types";
+import {
+  SET_CHILDREN,
+  SET_EVENT,
+  SET_TEMP_CHILDREN,
+  SET_TEMP_ACTIVITY,
+  SET_TOKEN,
+} from "./types";
 import { api_host } from "../../utils";
 
 const dispatch = store.dispatch;
@@ -82,9 +88,23 @@ export const setChildren = (data) => (dispatch) => {
   });
 };
 
+export const setTempChildren = (data) => (dispatch) => {
+  dispatch({
+    type: SET_TEMP_CHILDREN,
+    payload: data,
+  });
+};
+
 export const setEvent = (data) => (dispatch) => {
   dispatch({
     type: SET_EVENT,
+    payload: data,
+  });
+};
+
+export const setTempActivity = (data) => (dispatch) => {
+  dispatch({
+    type: SET_TEMP_ACTIVITY,
     payload: data,
   });
 };

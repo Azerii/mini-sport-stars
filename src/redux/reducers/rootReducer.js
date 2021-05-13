@@ -1,10 +1,19 @@
-import { SET_TOKEN, GET_USER, SET_CHILDREN, SET_EVENT } from "../actions/types";
+import {
+  SET_TOKEN,
+  GET_USER,
+  SET_CHILDREN,
+  SET_EVENT,
+  SET_TEMP_CHILDREN,
+  SET_TEMP_ACTIVITY,
+} from "../actions/types";
 
 export const initialState = {
   user: {},
   token: null,
   children: [],
-  current_event: "event",
+  temp_children: [],
+  current_event: "half term",
+  temp_activity: "",
 };
 
 export default function rootReducer(state = initialState, action) {
@@ -24,10 +33,20 @@ export default function rootReducer(state = initialState, action) {
         ...state,
         children: action.payload,
       };
+    case SET_TEMP_CHILDREN:
+      return {
+        ...state,
+        temp_children: action.payload,
+      };
     case SET_EVENT:
       return {
         ...state,
         current_event: action.payload,
+      };
+    case SET_TEMP_ACTIVITY:
+      return {
+        ...state,
+        temp_activity: action.payload,
       };
     default:
       return state;

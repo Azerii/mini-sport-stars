@@ -30,12 +30,16 @@ const Box = styled.div`
   }
 `;
 
-const handleClick = (id) => {
-  const checkboxInput = document.querySelector(`input[type="checkbox"]#${id}`);
+const handleClick = (e, id) => {
+  e.stopPropagation();
+  const checkboxInput = document.querySelector(
+    `input[type="checkbox"]#checkbox_${id}`
+  );
+
   checkboxInput.click();
 };
 
-const CheckBox = ({ className, name, grey, circle, required = false }) => {
+const CheckBox = ({ id, className, name, grey, circle, required = false }) => {
   const [checked, setChecked] = useState(false);
 
   return (
@@ -43,14 +47,16 @@ const CheckBox = ({ className, name, grey, circle, required = false }) => {
       grey={grey}
       circle={circle}
       checked={checked}
-      onClick={() => handleClick(name)}
+      onClick={(e) => handleClick(e, id)}
       className={className}
     >
       <input
         type="checkbox"
         name={name}
-        id={name}
-        value={checked}
+        id={`checkbox_${id}`}
+        data-id={id}
+        data-name={name}
+        checked={checked}
         onChange={() => setChecked(!checked)}
         required={required}
       />

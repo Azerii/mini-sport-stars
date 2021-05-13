@@ -35,6 +35,7 @@ const Sidebar = styled.div`
   padding: 0 2.4rem;
   background-color: #ffffff;
   overflow: auto;
+  z-index: 5;
 
   .item {
     display: flex;
@@ -58,6 +59,18 @@ const Sidebar = styled.div`
       }
     }
   }
+
+  @media screen and (max-width: 768px) {
+    position: fixed;
+    bottom: 0;
+    flex-direction: row;
+    width: 100vw;
+    height: fit-content;
+
+    .lg {
+      display: none;
+    }
+  }
 `;
 
 const Content = styled.div`
@@ -66,6 +79,10 @@ const Content = styled.div`
   overflow: auto;
   padding: 0 4.8rem;
   background-color: #f7f7fc;
+
+  @media screen and (max-width: 768px) {
+    padding: 0 2.4rem;
+  }
 `;
 
 const DashboardLayout = () => {
@@ -79,49 +96,49 @@ const DashboardLayout = () => {
       </Header>
       <Wrapper>
         <Sidebar>
-          <Spacer y={6} />
+          <Spacer y={6} className="lg" />
           <NavLink
             exact
             to="/dashboard"
             className="item"
-            activeClassName="active"
+            // activeClassName="active"
           >
             <img src={dashboardHome} alt="Home Icon" className="icon" />
-            <Spacer x={1.2} />
-            <span>Home</span>
+            <Spacer x={1.2} className="lg" />
+            <span className="lg">Home</span>
           </NavLink>
           <Spacer y={1.2} />
           <NavLink
             to="/dashboard/events"
             className="item"
-            activeClassName="active"
+            // activeClassName="active"
           >
             <img src={dashboardEvents} alt="Events Icon" className="icon" />
-            <Spacer x={1.2} />
-            <span>Events</span>
+            <Spacer x={1.2} className="lg" />
+            <span className="lg">Events</span>
           </NavLink>
           <Spacer y={1.2} />
           <NavLink
             to="/dashboard/profile"
             className="item"
-            activeClassName="active"
+            // activeClassName="active"
           >
             <img src={dashboardProfile} alt="Home Icon" className="icon" />
-            <Spacer x={1.2} />
-            <span>Profile</span>
+            <Spacer x={1.2} className="lg" />
+            <span className="lg">Profile</span>
           </NavLink>
           <Spacer y={1.2} />
           <a
             href="/sign-in"
             className="item"
-            activeClassName="active"
+            // activeClassName="active"
             onClick={() => localStorage.clear()}
           >
             <img src={logout} alt="Home Icon" className="icon" />
-            <Spacer x={1.2} />
-            <span>logout</span>
+            <Spacer x={1.2} className="lg" />
+            <span className="lg">logout</span>
           </a>
-          <Spacer y={1.2} />
+          <Spacer y={1.2} className="lg" />
         </Sidebar>
         <Content>
           <Switch>

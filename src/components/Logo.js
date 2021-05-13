@@ -20,6 +20,17 @@ const Wrapper = styled.div`
     letter-spacing: 0px;
     margin-left: 1.2rem;
   }
+
+  // @media screen and (max-width: 768px) {
+  //   .logo {
+  //     height: 4rem;
+  //   }
+
+  //   .text {
+  //     font-size: 18px;
+  //     line-height: 27px;
+  //   }
+  // }
 `;
 
 const Logo = ({ className, noText }) => {

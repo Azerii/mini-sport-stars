@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { loadStripe } from "@stripe/stripe-js";
 import PropTypes from "prop-types";
 import Spacer from "../../components/Spacer";
 import CheckBox from "../../components/CheckBox";
@@ -15,14 +16,24 @@ import {
 import { useEffect, useState } from "react";
 import { Route, useHistory } from "react-router";
 import { Link } from "react-router-dom";
-import { store } from "../../redux/store";
 import { connect } from "react-redux";
-import { getChildren, setEvent } from "../../redux/actions";
+import {
+  getChildren,
+  setEvent,
+  setTempChildren,
+  setTempActivity,
+} from "../../redux/actions";
+import axios from "axios";
+import { store } from "../../redux/store";
 
 const Wrapper = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-gap: 4.8rem;
+
+  @media screen and (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 const NoEvents = styled.p`
@@ -112,16 +123,18 @@ const Modal = styled.div`
   overflow: auto;
   background-color: #00000040;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 4.8rem 0;
   z-index: 10;
 
   .inner {
     width: 50%;
     background-color: #ffffff;
     padding: 4.8rem;
-    margin: 4.8rem 0;
     position: relative;
+    flex-shrink: 0;
   }
 
   form {
@@ -145,7 +158,6 @@ const Modal = styled.div`
     font-style: normal;
     font-weight: 700;
     line-height: 24px;
-    letter-spacing: 0px;
   }
 
   .listItem {
@@ -167,9 +179,11 @@ const Modal = styled.div`
       letter-spacing: 0px;
       text-align: left;
       color: ##1a1a1a;
+      pointer-events: none;
 
       .icon {
         height: 2rem;
+        pointer-events: none;
       }
     }
 
@@ -182,6 +196,7 @@ const Modal = styled.div`
       letter-spacing: 0px;
       text-align: left;
       color: #00000050;
+      pointer-events: none;
       pointer-events: none;
     }
 
@@ -196,6 +211,10 @@ const Modal = styled.div`
         color: #000000;
       }
     }
+  }
+
+  .infoText {
+    font-size: 1.4rem;
   }
 
   .actionBtns {
@@ -217,6 +236,7 @@ const Modal = styled.div`
       border-radius: 1rem;
       border: none;
       background-color: #ffffff;
+      transition: all 250ms ease-in;
 
       &.secondary {
         border: 1px solid #cd285350;
@@ -227,6 +247,19 @@ const Modal = styled.div`
         color: #ffffff;
         background-color: #cd2853;
       }
+
+      &.disabled {
+        color: #ffffff !important;
+        background-color: #d9d9d9 !important;
+      }
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    .inner {
+      width: 90%;
+      padding: 2.4rem;
+      margin-top: 2.4rem;
     }
   }
 `;
@@ -269,12 +302,38 @@ const tempEvents = [
       "We welcome aspiring players of all abilities to the club and we are convinced that with our unique coaching methods, all representatives of the club will succeed. ",
   },
 ];
-const tempChildren = [
-  "Dibie Tobi",
-  "Dibie Dayo",
-  "Dibie Chibuikem",
-  "Dibie Esther",
-];
+
+const infoPack = {
+  "saturday morning football": `
+    Reception/Year 1
+    £8 per session
+    \n
+    Year 2/Year 3 
+    £8 per session 
+    \n
+    Year 4/5/6 
+    £8 per session
+  `,
+  "half term": `
+    May Half Term Football Camp 
+    \n
+    Week 1 
+    Monday 31st May 
+    Tuesday 1st June 
+    Wednesday 2nd June 
+    Thursday 3rd June 
+    Friday 4th June 
+    \n
+    Cost 
+    Single day - £30 
+    \n
+    5 days - £140
+  `,
+  "1 to 1 coaching": `No activities for now.`,
+  "advanced centre": `No activities for now.`,
+  "birthday parties": `No activities for now.`,
+  "trial days": `No activities for now.`,
+};
 
 const activities = {
   "saturday morning football": [
@@ -303,23 +362,16 @@ const activities = {
   ],
 };
 
-const checkoutDetails = [
-  {
-    activity: "Reception / Year 1 Football",
-    quantity: 1,
-    price: 8.0,
-  },
-  {
-    activity: "Mums’ Football",
-    quantity: 2,
-    price: 20.0,
-  },
-  {
-    activity: "Year 4 / Year 5 / Year 6 Football",
-    quantity: 1,
-    price: 4.0,
-  },
-];
+const activityPrices = {
+  "reception / year 1 football": 8,
+  "year 2 / year 3 football": 8,
+  "year 4 / year 5 / year 6 football": 8,
+  "single day": 30,
+  "5 days": 140,
+};
+
+const stripe_api_key =
+  "pk_test_51H9t0qL1lruO1TxM95muxi9GSAQPltFr3bajfWVoNX369vEnE7slL4IVqTolIvh9uYBEul4PZUgP8RXBktJnqJdP00J0z9Vr9g";
 
 const Event = ({ href, imgSrc, title, desc, setEvent }) => {
   return (
@@ -338,23 +390,111 @@ const Event = ({ href, imgSrc, title, desc, setEvent }) => {
 const Events = (props) => {
   const history = useHistory();
   const [events] = useState(tempEvents);
+  const [btnActive, setBtnActive] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleSelect = (e, index) => {
-    const selectedEl = e.target;
+  const current_event_check = (title__) => {
+    const title = title__.toLowerCase();
 
-    selectedEl.classList.toggle("selected");
-    document.querySelector(`input[type="checkbox"]#${index}`).click();
+    return title === "saturday morning football" || title === "half term";
   };
 
-  const handleSubmit = (e, target, pay) => {
+  const handleCheckout = async () => {
+    const access_token = store.getState().token;
+    const children_ids = props.temp_children.map((id) => Number(id));
+    const data = {
+      event_name: props.current_event,
+      children_ids,
+      selected_activity: props.temp_activity,
+      unit_price: activityPrices[props.temp_activity.toLowerCase()],
+    };
+    const url =
+      "https://minisportstars-backend.herokuapp.com/api/register_children";
+
+    try {
+      setLoading(true);
+      let res = await axios.post(url, data, {
+        headers: { Authorization: `Bearer ${access_token}` },
+      });
+      if (res && res.data && res.data.status === "success") {
+        setLoading(false);
+        let { stripe_key } = res.data.data;
+        let stripePromise = await loadStripe(stripe_api_key);
+
+        stripePromise.redirectToCheckout({
+          sessionId: stripe_key,
+        });
+      }
+      if (res.data.error) {
+        setLoading(false);
+        console.log(res.data.error);
+        alert(res.data.error.message);
+      }
+      setLoading(false);
+    } catch (e) {
+      setLoading(false);
+      console.log(e.message);
+    }
+  };
+
+  const handleSelect = (e, index, activity = false) => {
+    e.preventDefault();
+    const selectedEl = document.querySelector(`#${index}`);
+    const selectedElCheckbox = document.querySelector(`#${index} .checkBox`);
+
+    if (activity) {
+      document.querySelectorAll(`.listItem`).forEach((item) => {
+        item.classList.remove("selected");
+        item.querySelector(`.checkBox input`).checked &&
+          item.querySelector(`.checkBox`).click();
+      });
+
+      selectedEl.classList.toggle("selected");
+      !selectedEl.querySelector(`.checkBox input`).checked &&
+        selectedElCheckbox.click();
+    } else {
+      selectedEl.classList.toggle("selected");
+      selectedElCheckbox.click();
+    }
+
+    const checkedInputs = document.querySelectorAll(
+      `input[type="checkbox"]:checked`
+    );
+
+    if (checkedInputs.length) {
+      setBtnActive(true);
+    } else {
+      setBtnActive(false);
+    }
+  };
+
+  const handleSubmit_children = (e, target) => {
+    e.preventDefault();
+    const inputArr = Array.from(
+      document.querySelectorAll(`input[type="checkbox"]:checked`)
+    );
+    const children_ids = inputArr.map((input) => input.dataset.id);
+
+    props.setTempChildren(children_ids);
+    window.location.replace(target);
+  };
+
+  const handleSubmit_activity = (e, target) => {
     e.preventDefault();
 
-    history.push(target);
+    let selected_activity;
+    document.querySelectorAll(`input[type="checkbox"]`).forEach((input) => {
+      if (input.checked) {
+        selected_activity = input.dataset.name;
+      }
+    });
+
+    props.setTempActivity(selected_activity);
+    window.location.replace(target);
   };
 
   useEffect(() => {
     getChildren();
-
     // eslint-disable-next-line
   }, []);
 
@@ -374,12 +514,42 @@ const Events = (props) => {
               imgSrc={item.imgSrc}
               title={item.title}
               desc={item.desc}
-              href="/dashboard/events/register"
+              href={`/dashboard/events/info?title=${item.title}`}
               {...props}
             />
           ))}
         <Spacer y={4.8} />
       </Wrapper>
+
+      {/* Info */}
+      <Route path="/dashboard/events/info">
+        <Modal>
+          <div className="inner">
+            <Link to="/dashboard/events" className="closeIcon">
+              <img src={close} alt="close" />
+            </Link>
+            <h3 className="title textCapitalize">{props.current_event}</h3>
+            <Spacer y={2.4} />
+            {infoPack[props.current_event].split("\n").map((item, index) => (
+              <p key={`${index}_${item}`} className="textRegular infoText">
+                <span>{item}</span>
+                <br />
+              </p>
+            ))}
+            <Spacer y={4.8} />
+            <div className="actionBtns">
+              <Link to="/dashboard/events" className="btn secondary">
+                Back
+              </Link>
+              {current_event_check(props.current_event) && (
+                <Link to="/dashboard/events/register" className="btn primary">
+                  Continue
+                </Link>
+              )}
+            </div>
+          </div>
+        </Modal>
+      </Route>
 
       {/* Register child for event */}
       <Route path="/dashboard/events/register">
@@ -392,15 +562,18 @@ const Events = (props) => {
             <Spacer y={4.8} />
             <form
               onSubmit={(e) =>
-                handleSubmit(e, "/dashboard/events/choose-activity")
+                handleSubmit_children(e, "/dashboard/events/choose-activity")
               }
             >
-              {tempChildren &&
-                tempChildren.map((child, index) => (
+              {props.children.length &&
+                props.children.map((child, index) => (
                   <div key={`child_${index + 1}`}>
                     <div
                       className="listItem"
-                      onClick={(e) => handleSelect(e, `child_${index + 1}`)}
+                      id={`id_${index + 1}`}
+                      onClick={(e) => {
+                        handleSelect(e, `id_${index + 1}`);
+                      }}
                     >
                       <div className="info">
                         <img
@@ -409,12 +582,12 @@ const Events = (props) => {
                           className="icon"
                         />
                         <Spacer x={1.2} />
-                        <span>{child}</span>
+                        <span>{child.name}</span>
                       </div>
                       <CheckBox
                         className="checkBox"
-                        id={`child_${index + 1}`}
-                        name={store.getState().current_event}
+                        id={`${child.id}`}
+                        name={`child_${index + 1}`}
                         circle
                         grey
                       />
@@ -427,7 +600,12 @@ const Events = (props) => {
                 <Link to="/dashboard/events" className="btn secondary">
                   Back
                 </Link>
-                <button className="btn primary">Continue</button>
+                <button
+                  className={`btn primary ${btnActive ? "" : "disabled"}`}
+                  disabled={btnActive ? false : true}
+                >
+                  Continue
+                </button>
               </div>
             </form>
           </div>
@@ -444,7 +622,9 @@ const Events = (props) => {
             <h3 className="title">Choose activity</h3>
             <Spacer y={4.8} />
             <form
-              onSubmit={(e) => handleSubmit(e, "/dashboard/events/payment")}
+              onSubmit={(e) =>
+                handleSubmit_activity(e, "/dashboard/events/payment")
+              }
             >
               {activities &&
                 activities[props.current_event] &&
@@ -452,13 +632,14 @@ const Events = (props) => {
                   <div key={`class_${index + 1}`}>
                     <div
                       className="listItem"
-                      onClick={(e) => handleSelect(e, `class_${index + 1}`)}
+                      id={`id_${index + 1}`}
+                      onClick={(e) => handleSelect(e, `id_${index + 1}`, true)}
                     >
                       <span className="label">{item.activity}</span>
                       <CheckBox
                         className="checkBox"
-                        id={`class_${index + 1}`}
-                        name={`class_${index + 1}`}
+                        id={`${index + 1}`}
+                        name={item.activity}
                         circle
                         grey
                       />
@@ -471,7 +652,12 @@ const Events = (props) => {
                 <Link to="/dashboard/events/register" className="btn secondary">
                   Back
                 </Link>
-                <button className="btn primary">Continue</button>
+                <button
+                  className={`btn primary ${btnActive ? "" : "disabled"}`}
+                  disabled={btnActive ? false : true}
+                >
+                  Continue
+                </button>
               </div>
             </form>
           </div>
@@ -488,22 +674,34 @@ const Events = (props) => {
             <h3 className="title">Payment</h3>
             <Spacer y={4.8} />
             <Paynow>
-              {checkoutDetails.map((item) => (
-                <div key={item.activity} className="activityRow">
-                  <p>
-                    <span className="textRegular">{item.activity}</span>
-                    <span>&nbsp;&nbsp;&nbsp;</span>
-                    <span className="textLight">X{item.quantity}</span>
-                  </p>
-                  <p className="textMedium">£{item.price}</p>
-                </div>
-              ))}
+              <div className="activityRow">
+                <p>
+                  <span className="textRegular">{props.temp_activity}</span>
+                  <span>&nbsp;&nbsp;&nbsp;</span>
+                  <span className="textLight">
+                    X{props.temp_children.length}
+                  </span>
+                </p>
+                <p className="textMedium">
+                  £
+                  {props.temp_activity &&
+                    activityPrices[props.temp_activity.toLowerCase()] &&
+                    activityPrices[props.temp_activity.toLowerCase()] *
+                      props.temp_children.length}
+                </p>
+              </div>
               <Spacer y={4.8} />
               <div className="divider"></div>
               <Spacer y={1.2} />
               <div className="activityRow">
                 <p className="textMedium">Total</p>
-                <p className="textBold">£32.00</p>
+                <p className="textBold">
+                  £
+                  {props.temp_activity &&
+                    activityPrices[props.temp_activity.toLowerCase()] &&
+                    activityPrices[props.temp_activity.toLowerCase()] *
+                      props.temp_children.length}
+                </p>
               </div>
             </Paynow>
             <Spacer y={4.8} />
@@ -514,7 +712,13 @@ const Events = (props) => {
               >
                 Back
               </Link>
-              <button className="btn primary">Pay now</button>
+              <button
+                className={`btn primary ${loading ? "disabled" : ""}`}
+                onClick={handleCheckout}
+                disabled={loading ? true : false}
+              >
+                {loading ? "..." : "Paynow"}
+              </button>
             </div>
           </div>
         </Modal>
@@ -533,12 +737,17 @@ Event.propTypes = {
 const mapStateToProps = (state) => {
   return {
     current_event: state.current_event,
+    children: state.children,
+    temp_children: state.temp_children,
+    temp_activity: state.temp_activity,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
     setEvent: (title) => dispatch(setEvent(title)),
+    setTempChildren: (data) => dispatch(setTempChildren(data)),
+    setTempActivity: (data) => dispatch(setTempActivity(data)),
   };
 };
 
