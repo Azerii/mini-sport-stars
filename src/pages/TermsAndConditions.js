@@ -1,10 +1,11 @@
-import { useHistory } from "react-router";
+import { Redirect, useHistory } from "react-router";
 import styled from "styled-components";
 import Button from "../components/Button";
 import Caption from "../components/Caption";
 import CheckBox from "../components/CheckBox";
 import Logo from "../components/Logo";
 import Spacer from "../components/Spacer";
+import { store } from "../redux/store";
 
 const Wrapper = styled.div`
   display: flex;
@@ -47,6 +48,10 @@ const TermsAndConditions = () => {
     }
   };
 
+  if (store.getState().token) {
+    return <Redirect to="/dashboard" />;
+  }
+
   return (
     <Wrapper>
       <Spacer y={4.8} />
@@ -70,7 +75,7 @@ const TermsAndConditions = () => {
       </p>
       <Spacer y={4.8} />
       <div className="flex-row fullWidth">
-        <CheckBox name="readAndAgreed" required />
+        <CheckBox id="readAndAgreed" name="readAndAgreed" required />
         <Spacer x={1.2} />
         <span className="prompt">
           I have read and agreed to the above Terms &amp; Conditions
@@ -78,7 +83,7 @@ const TermsAndConditions = () => {
       </div>
       <Spacer y={1.2} />
       <div className="flex-row fullWidth">
-        <CheckBox name="photoConsent" required />
+        <CheckBox id="photoConsent" name="photoConsent" required />
         <Spacer x={1.2} />
         <span className="prompt">
           I give photo consent for Mini Sports Stars social platforms
