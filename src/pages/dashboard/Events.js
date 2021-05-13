@@ -14,7 +14,7 @@ import {
   trialDays,
 } from "../../assets";
 import { useEffect, useState } from "react";
-import { Route, useHistory } from "react-router";
+import { Route } from "react-router";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import {
@@ -388,7 +388,6 @@ const Event = ({ href, imgSrc, title, desc, setEvent }) => {
 };
 
 const Events = (props) => {
-  const history = useHistory();
   const [events] = useState(tempEvents);
   const [btnActive, setBtnActive] = useState(false);
   const [loading, setLoading] = useState(false);
