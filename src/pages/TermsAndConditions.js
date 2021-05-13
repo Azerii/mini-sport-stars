@@ -57,7 +57,7 @@ const TermsAndConditions = () => {
       <Spacer y={4.8} />
       <Logo />
       <Spacer y={4.8} />
-      <Caption heading={`Terms and Conditions`} />
+      <Caption heading={`Terms and Conditions`} align="center" />
       <Spacer y={3.6} />
       <p className="content fullWidth">
         Please note that all bookings are based on a 'First come, first served
