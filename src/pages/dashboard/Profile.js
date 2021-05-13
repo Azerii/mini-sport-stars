@@ -26,6 +26,11 @@ const Wrapper = styled.div`
   form {
     width: 100%;
   }
+
+  @media screen and (max-width: 768px) {
+    padding: 2.4rem;
+    width: 100%;
+  }
 `;
 
 const Tabs = styled.div`
@@ -33,9 +38,8 @@ const Tabs = styled.div`
   width: fit-content;
 
   .tabLink {
-    height: 4rem;
     width: fit-content;
-    padding: 0 2.4rem;
+    padding: 1.2rem 2.4rem;
     border-bottom: 2px solid #c4c4c4;
     font-family: Gordita;
     font-size: 14px;
@@ -63,6 +67,18 @@ const Tabs = styled.div`
       .activeBar {
         opacity: 1;
       }
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    width: 100%;
+
+    .tabLink {
+      width: 50%;
+      font-size: 10px;
+      line-height: normal;
+      padding: 1.2rem 0;
+      text-align: center;
     }
   }
 `;
@@ -199,7 +215,7 @@ const Profile = () => {
               placeholder="Address"
               defaultValue="6391 Elgin St. Celina, Delaware 10299"
             />
-            <Spacer y={2.4} />
+            {/* <Spacer y={2.4} />
             <FormGroup
               className="password"
               fieldStyle="shortText"
@@ -207,7 +223,7 @@ const Profile = () => {
               name="password"
               placeholder="Password"
               defaultValue="shabalaba"
-            />
+            /> */}
             <Spacer y={4.8} />
             <Button text="Save changes" fullWidth />
             <Spacer y={4.8} />
@@ -235,7 +251,7 @@ const Profile = () => {
                     <Spacer x={1.2} />
                     <span>{child}</span>
                   </div>
-                  <button className="remove">Remove child</button>
+                  <button className="remove">remove</button>
                 </Child>
                 <Spacer y={2.4} />
               </div>
