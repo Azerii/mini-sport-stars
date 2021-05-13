@@ -86,8 +86,8 @@ const Content = styled.div`
 `;
 
 const DashboardLayout = () => {
-  if (!store.getState().children.length) {
-    return <Redirect to="/add-child" />;
+  if (!store.getState().token) {
+    return <Redirect to="/sign-in" />;
   }
   return (
     <>
