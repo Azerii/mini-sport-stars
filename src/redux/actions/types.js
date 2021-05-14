@@ -4,3 +4,7 @@ export const SET_CHILDREN = "SET_CHILDREN";
 export const SET_EVENT = "SET_EVENT";
 export const SET_TEMP_CHILDREN = "SET_TEMP_CHILDREN";
 export const SET_TEMP_ACTIVITY = "SET_TEMP_ACTIVITY";
+
+// admin
+export const SET_ADMIN_TOKEN = "SET_ADMIN_TOKEN";
+export const SET_TRANSACTIONS = "SET_TRANSACTIONS";

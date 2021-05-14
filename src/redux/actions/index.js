@@ -6,6 +6,8 @@ import {
   SET_TEMP_CHILDREN,
   SET_TEMP_ACTIVITY,
   SET_TOKEN,
+  SET_ADMIN_TOKEN,
+  SET_TRANSACTIONS,
 } from "./types";
 import { api_host } from "../../utils";
 
@@ -105,6 +107,52 @@ export const setEvent = (data) => (dispatch) => {
 export const setTempActivity = (data) => (dispatch) => {
   dispatch({
     type: SET_TEMP_ACTIVITY,
+    payload: data,
+  });
+};
+
+// admin
+
+export const loginAdmin = async (cred) => {
+  try {
+    const res = await axios.post(`${api_host}/admin/login`, cred);
+
+    if (res && res.data.status === "success") {
+      dispatch(setAdminToken(res.data.data.access_token));
+    }
+
+    return res.data;
+  } catch (e) {
+    console.log(e.message);
+  }
+};
+
+export const getTransactions = async () => {
+  const token = store.getState().admin_token;
+
+  try {
+    const res = await axios.get(`${api_host}/admin/get_all_transactions`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (res && res.data.status === "success") {
+      dispatch(setTransactions(res.data.data));
+    }
+  } catch (e) {
+    console.log(e.message);
+  }
+};
+
+export const setAdminToken = (data) => (dispatch) => {
+  dispatch({
+    type: SET_ADMIN_TOKEN,
+    payload: data,
+  });
+};
+
+export const setTransactions = (data) => (dispatch) => {
+  dispatch({
+    type: SET_TRANSACTIONS,
     payload: data,
   });
 };

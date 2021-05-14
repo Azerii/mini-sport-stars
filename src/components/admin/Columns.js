@@ -5,15 +5,15 @@ export const COLUMNS = [
   },
   {
     Header: "name",
-    accessor: "name",
+    accessor: "_name",
   },
   {
     Header: "event name",
     accessor: "event_name",
   },
   {
-    Header: "age grade",
-    accessor: "age_grade",
+    Header: "Participants",
+    accessor: "participants",
   },
   {
     Header: "amount paid",

@@ -4,6 +4,9 @@ import Button from "../../components/Button";
 import FormGroup from "../../components/FormGroup";
 import Spacer from "../../components/Spacer";
 import { useHistory } from "react-router";
+import { formDataToJSON } from "../../utils";
+import { useState } from "react";
+import { loginAdmin } from "../../redux/actions";
 
 const Header = styled.div`
   display: flex;
@@ -40,10 +43,28 @@ const Wrapper = styled.div`
 
 const AdminLogin = () => {
   const history = useHistory();
-  const handleSubmit = (e) => {
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    history.push("/admin/dashboard");
+    const formData = new FormData(e.target);
+    const data_JSON = formDataToJSON(formData);
+
+    setLoading(true);
+
+    let res = await loginAdmin(data_JSON);
+
+    if (res && res.status === "success") {
+      setLoading(false);
+      history.push("/admin");
+    } else if (res && res.status === "error") {
+      setLoading(false);
+      alert(res.message);
+    } else {
+      setLoading(false);
+      alert("Something went wrong");
+    }
   };
   return (
     <>
@@ -59,7 +80,7 @@ const AdminLogin = () => {
           <FormGroup
             fieldStyle="shortText"
             inputType="text"
-            name="email_address"
+            name="email"
             placeholder="Email address"
             type="email"
           />
@@ -72,9 +93,14 @@ const AdminLogin = () => {
             placeholder="Password"
           />
           <Spacer y={4.8} />
-          <Button text="Sign in" fullWidth />
+          <Button
+            text={loading ? "..." : "Sign in"}
+            disabled={loading}
+            fullWidth
+          />
           <Spacer y={4.8} />
         </form>
+        <Spacer y={9.6} />
       </Wrapper>
     </>
   );

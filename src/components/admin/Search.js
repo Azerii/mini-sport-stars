@@ -35,7 +35,7 @@ const Wrapper = styled.div`
   }
 `;
 
-const Search = ({ filter, setFilter }) => {
+const Search = ({ filter = "", setFilter }) => {
   return (
     <Wrapper>
       <img src={searchIcon} alt="search" className="searchIcon" />

@@ -40,7 +40,7 @@ function App() {
 
             {/* Admin */}
             <Route path="/admin/sign-in" component={AdminLogin} />
-            <Route path="/admin" component={AdminLayout} />
+            <Route exact path="/admin" component={AdminLayout} />
           </div>
         </Router>
       </PersistGate>

@@ -1,14 +1,17 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, Redirect } from "react-router-dom";
 import styled from "styled-components";
-import { adminDashboard, bell } from "../../assets";
+import { adminDashboard, logout } from "../../assets";
 import Logo from "../Logo";
 import Spacer from "../Spacer";
 import Search from "./Search";
 import { useTable, useGlobalFilter } from "react-table";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { COLUMNS } from "./Columns";
-import MOCK_DATA from "./MOCK_DATA.json";
-import Filter from "./Filter";
+// import MOCK_DATA from "./MOCK_DATA.json";
+// import Filter from "./Filter";
+import { getTransactions } from "../../redux/actions";
+import { connect } from "react-redux";
+import { store } from "../../redux/store";
 
 const Header = styled.div`
   display: flex;
@@ -19,24 +22,24 @@ const Header = styled.div`
   background-color: #ffffff;
 `;
 
-const Noftification = styled.div`
-  position: relative;
-  padding: 1.2rem;
+// const Noftification = styled.div`
+//   position: relative;
+//   padding: 1.2rem;
 
-  .icon {
-    height: 2.4rem;
-  }
+//   .icon {
+//     height: 2.4rem;
+//   }
 
-  .badge {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 1.2rem;
-    height: 1.2rem;
-    background-color: #cd2853;
-    border-radius: 50%;
-  }
-`;
+//   .badge {
+//     position: absolute;
+//     top: 0;
+//     left: 0;
+//     width: 1.2rem;
+//     height: 1.2rem;
+//     background-color: #cd2853;
+//     border-radius: 50%;
+//   }
+// `;
 
 const Wrapper = styled.div`
   display: flex;
@@ -55,7 +58,7 @@ const Sidebar = styled.div`
     display: flex;
     align-items: flex-start;
     padding: 1.6rem 0;
-    color: #cd2853;
+    color: #00000050;
     font-family: Gordita;
     font-size: 18px;
     font-style: normal;
@@ -67,6 +70,10 @@ const Sidebar = styled.div`
     .icon {
       margin-right: 1.2rem;
     }
+
+    &.active {
+      color: #cd2853;
+    }
   }
 `;
 
@@ -74,7 +81,7 @@ const Content = styled.div`
   width: -webkit-fill-available;
   height: calc(100vh - 10.8rem);
   overflow: auto;
-  padding: 0 4.8rem;
+  padding: 0 2.4rem;
   background-color: #f7f7fc;
 `;
 
@@ -128,9 +135,24 @@ const TableInner = styled.table`
   }
 `;
 
-const AdminLayout = () => {
+const AdminLayout = (props) => {
+  const transactions = useMemo(
+    () =>
+      props.transactions.map((transaction) => ({
+        id: transaction.id,
+        _name: "--",
+        event_name: transaction.event_name,
+        participants: transaction.children_ids.length,
+        amount_paid: transaction.amount_paid,
+        date_paid:
+          transaction.amount_paid !== "not_paid"
+            ? new Date(transaction.updated_at).toLocaleDateString()
+            : "--",
+      })),
+    [props.transactions]
+  );
   const columns = useMemo(() => COLUMNS, []);
-  const data = useMemo(() => MOCK_DATA, []);
+  const data = useMemo(() => transactions || [], [transactions]);
 
   const {
     getTableProps,
@@ -149,17 +171,27 @@ const AdminLayout = () => {
   );
 
   const { globalFilter } = state;
+
+  useEffect(() => {
+    getTransactions();
+    // eslint-disable-next-line
+  }, []);
+
+  if (!store.getState().admin_token) {
+    return <Redirect to="/admin/sign-in" />;
+  }
+
   return (
     <>
       <Header>
         <Logo />
         <Search filter={globalFilter} setFilter={setGlobalFilter} />
-        <div>
+        {/* <div>
           <Noftification>
             <span className="badge"></span>
             <img src={bell} alt="Bell" className="icon" />
           </Noftification>
-        </div>
+        </div> */}
       </Header>
       <Wrapper>
         <Sidebar>
@@ -169,14 +201,24 @@ const AdminLayout = () => {
             <Spacer x={1.2} />
             <span>Dashboard</span>
           </NavLink>
+          <Spacer y={1.2} />
+          <a
+            href="/admin/sign-in"
+            className="item"
+            onClick={() => localStorage.clear()}
+          >
+            <img src={logout} alt="Home Icon" className="icon" />
+            <Spacer x={1.2} className="lg" />
+            <span className="lg">logout</span>
+          </a>
         </Sidebar>
         <Content>
           <>
-            <Spacer y={4.8} />
+            <Spacer y={7.2} />
             <TableWrapper>
               <Spacer y={4.8} />
-              <Filter />
-              <Spacer y={4.8} />
+              {/* <Filter />
+              <Spacer y={4.8} /> */}
               <TableInner {...getTableProps()}>
                 <thead>
                   {headerGroups.map((headerGroup) => (
@@ -219,4 +261,10 @@ const AdminLayout = () => {
   );
 };
 
-export default AdminLayout;
+const mapStateToProps = (state) => {
+  return {
+    transactions: state.transactions,
+  };
+};
+
+export default connect(mapStateToProps)(AdminLayout);

@@ -37,7 +37,7 @@ const SignUp = () => {
   };
   return (
     <AuthWrapper>
-      <Spacer y={4.8} />
+      <Spacer y={6} />
       <Logo />
       <Spacer y={4.8} />
       <Caption
