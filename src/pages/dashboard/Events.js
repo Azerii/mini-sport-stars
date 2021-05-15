@@ -529,12 +529,13 @@ const Events = (props) => {
             </Link>
             <h3 className="title textCapitalize">{props.current_event}</h3>
             <Spacer y={2.4} />
-            {infoPack[props.current_event].split("\n").map((item, index) => (
-              <p key={`${index}_${item}`} className="textRegular infoText">
-                <span>{item}</span>
-                <br />
-              </p>
-            ))}
+            {infoPack[props.current_event] &&
+              infoPack[props.current_event].split("\n").map((item, index) => (
+                <p key={`${index}_${item}`} className="textRegular infoText">
+                  <span>{item}</span>
+                  <br />
+                </p>
+              ))}
             <Spacer y={4.8} />
             <div className="actionBtns">
               <Link to="/dashboard/events" className="btn secondary">

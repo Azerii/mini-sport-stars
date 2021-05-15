@@ -33,7 +33,21 @@ const AddChild = () => {
   const history = useHistory();
   const [loading, setLoading] = useState(false);
   const [addMore, setAddMore] = useState(false);
+  const [alertText, setAlertText] = useState("");
+  const [success, setSuccess] = useState(false);
   const children = [];
+
+  const showSuccessAlert = (msg = "...", _success = false) => {
+    // e.preventDefault();
+    setSuccess(_success);
+    setAlertText(msg);
+
+    document.querySelector(".alertBox").classList.add("show");
+    setTimeout(
+      () => document.querySelector(".alertBox").classList.remove("show"),
+      3000
+    );
+  };
 
   const handleSubmit = async (e) => {
     let formEl;
@@ -58,21 +72,20 @@ const AddChild = () => {
       document.querySelector(".alertBox").classList.add("show");
       if (addMore) {
         setTimeout(() => {
-          document.querySelector(".alertBox").classList.remove("show");
+          showSuccessAlert("Child saved successfully", true);
           window.location.reload();
         }, 3000);
       } else {
         setTimeout(() => {
-          document.querySelector(".alertBox").classList.remove("show");
           history.push("/terms-and-conditions");
         }, 3000);
       }
     } else if (res && res.status === "error") {
       setLoading(false);
-      alert(res.message);
+      showSuccessAlert(res.message, false);
     } else {
       setLoading(false);
-      alert("Something went wrong");
+      showSuccessAlert("Something went wrong", false);
     }
   };
 
@@ -82,7 +95,7 @@ const AddChild = () => {
 
   return (
     <AuthWrapper>
-      <AlertBox className="alertBox" text="Child saved successfully" />
+      <AlertBox className="alertBox" success={success} text={alertText} />
       <Spacer y={4.8} />
       <Logo />
       <Spacer y={4.8} />

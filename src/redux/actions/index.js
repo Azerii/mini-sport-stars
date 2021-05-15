@@ -1,6 +1,7 @@
 import axios from "axios";
 import { store } from "../store";
 import {
+  SET_USER,
   SET_CHILDREN,
   SET_EVENT,
   SET_TEMP_CHILDREN,
@@ -24,7 +25,6 @@ export const registerUser = (data) => async () => {
     return null;
   } catch (e) {
     console.log(e.message);
-    alert("An error occurred");
   }
 };
 
@@ -34,6 +34,7 @@ export const loginUser = async (cred) => {
 
     if (res && res.data.status === "success") {
       dispatch(setToken(res.data.data.access_token));
+      dispatch(setUser(res.data.data.user));
     }
 
     return res.data;
@@ -76,10 +77,69 @@ export const getChildren = async () => {
   }
 };
 
+export const removeChild = async (id) => {
+  const token = store.getState().token;
+
+  try {
+    const res = await axios.get(`${api_host}/remove_child/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (res && res.data.status === "success") {
+      dispatch(setChildren(res.data.data));
+    }
+
+    return res.data;
+  } catch (e) {
+    console.log(e.message);
+  }
+};
+
+export const getProfile = async () => {
+  const token = store.getState().token;
+
+  try {
+    const res = await axios.get(`${api_host}/get_profile`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (res && res.data.status === "success") {
+      dispatch(setUser(res.data.data.user));
+    }
+  } catch (e) {
+    console.log(e.message);
+  }
+};
+
+export const updateProfile = async (data) => {
+  const token = store.getState().token;
+
+  try {
+    const res = await axios.post(`${api_host}/update_profile`, data, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (res && res.data.status === "success") {
+      return res.data;
+    }
+
+    return null;
+  } catch (e) {
+    console.log(e.message);
+  }
+};
+
 export const setToken = (token) => (dispatch) => {
   dispatch({
     type: SET_TOKEN,
     payload: token,
+  });
+};
+
+export const setUser = (data) => (dispatch) => {
+  dispatch({
+    type: SET_USER,
+    payload: data,
   });
 };
 

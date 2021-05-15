@@ -140,7 +140,7 @@ const AdminLayout = (props) => {
     () =>
       props.transactions.map((transaction) => ({
         id: transaction.id,
-        _name: "--",
+        _name: transaction.parent.full_name,
         event_name: transaction.event_name,
         participants: transaction.children_ids.length,
         amount_paid: transaction.amount_paid,

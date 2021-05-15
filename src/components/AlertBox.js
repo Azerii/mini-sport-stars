@@ -7,7 +7,7 @@ const Box = styled.div`
   padding-left: 2.2rem;
   min-width: 34.2rem;
   height: 6.5rem;
-  border-left: 8px solid #00ba88;
+  border-left: 8px solid ${(props) => (props.success ? "#00ba88" : "#e12853")};
   border-radius: 1.2rem;
   box-shadow: 0px 16px 40px 0px #9aaaac33;
   background-color: #ffffff;
@@ -36,9 +36,9 @@ const Box = styled.div`
   }
 `;
 
-const AlertBox = ({ className, text }) => {
+const AlertBox = ({ className, text, success }) => {
   return (
-    <Box className={className}>
+    <Box className={className} success={success}>
       <span className="text">{text}</span>
     </Box>
   );
@@ -47,6 +47,7 @@ const AlertBox = ({ className, text }) => {
 AlertBox.propTypes = {
   className: PropTypes.string.isRequired,
   text: PropTypes.string.isRequired,
+  success: PropTypes.bool.isRequired,
 };
 
 export default AlertBox;

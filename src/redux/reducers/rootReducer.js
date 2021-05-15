@@ -1,6 +1,6 @@
 import {
   SET_TOKEN,
-  GET_USER,
+  SET_USER,
   SET_CHILDREN,
   SET_EVENT,
   SET_TEMP_CHILDREN,
@@ -32,7 +32,7 @@ export default function rootReducer(state = initialState, action) {
         ...state,
         admin_token: action.payload,
       };
-    case GET_USER:
+    case SET_USER:
       return {
         ...state,
         user: action.payload,
