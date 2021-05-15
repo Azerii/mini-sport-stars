@@ -9,6 +9,7 @@ import {
   SET_TOKEN,
   SET_ADMIN_TOKEN,
   SET_TRANSACTIONS,
+  SET_TEMP_CHILD_ID,
 } from "./types";
 import { api_host } from "../../utils";
 
@@ -81,13 +82,13 @@ export const removeChild = async (id) => {
   const token = store.getState().token;
 
   try {
-    const res = await axios.get(`${api_host}/remove_child/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    if (res && res.data.status === "success") {
-      dispatch(setChildren(res.data.data));
-    }
+    const res = await axios.post(
+      `${api_host}/remove_child/${id}`,
+      { id },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
 
     return res.data;
   } catch (e) {
@@ -168,6 +169,13 @@ export const setTempActivity = (data) => (dispatch) => {
   dispatch({
     type: SET_TEMP_ACTIVITY,
     payload: data,
+  });
+};
+
+export const setTempChildId = (id) => (dispatch) => {
+  dispatch({
+    type: SET_TEMP_CHILD_ID,
+    payload: id,
   });
 };
 

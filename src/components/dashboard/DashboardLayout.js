@@ -21,6 +21,10 @@ const Header = styled.div`
   height: 10.8rem;
   padding: 0 2.4rem;
   background-color: #ffffff;
+
+  @media screen and (max-width: 768px) {
+    height: 8.4rem;
+  }
 `;
 
 const Wrapper = styled.div`

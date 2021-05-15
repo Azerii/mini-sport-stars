@@ -29,11 +29,11 @@ const Wrapper = styled.div`
 
   @media screen and (max-width: 768px) {
     padding: 0;
-    width: 90%;
+    width: ${(props) => (props.fullWidth ? "100%" : "90%")};
 
     .heading {
-      font-size: 24px;
-      line-height: 36px;
+      font-size: 20px;
+      line-height: 32px;
     }
     .subHeading {
       font-size: 14px;
@@ -48,8 +48,9 @@ const Caption = ({
   subHeading,
   subHeadingColor,
   align,
+  fullWidth,
 }) => {
-  const styleProps = { className, subHeadingColor, align };
+  const styleProps = { className, subHeadingColor, align, fullWidth };
   return (
     <Wrapper {...styleProps}>
       <h2 className="heading textLargeBold">
@@ -81,6 +82,7 @@ Caption.propTypes = {
   subHeading: PropTypes.string,
   subHeadingColor: PropTypes.string,
   align: PropTypes.string,
+  fullWidth: PropTypes.bool,
 };
 
 export default Caption;

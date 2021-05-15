@@ -7,6 +7,7 @@ import {
   SET_TEMP_ACTIVITY,
   SET_ADMIN_TOKEN,
   SET_TRANSACTIONS,
+  SET_TEMP_CHILD_ID,
 } from "../actions/types";
 
 export const initialState = {
@@ -18,6 +19,7 @@ export const initialState = {
   temp_children: [],
   current_event: "",
   temp_activity: "",
+  temp_child_id: null,
 };
 
 export default function rootReducer(state = initialState, action) {
@@ -56,6 +58,11 @@ export default function rootReducer(state = initialState, action) {
       return {
         ...state,
         temp_activity: action.payload,
+      };
+    case SET_TEMP_CHILD_ID:
+      return {
+        ...state,
+        temp_child_id: action.payload,
       };
     case SET_TRANSACTIONS:
       return {

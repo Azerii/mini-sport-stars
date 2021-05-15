@@ -1,13 +1,21 @@
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { NavLink, Route } from "react-router-dom";
+import { Link, NavLink, Route } from "react-router-dom";
 import styled from "styled-components";
 import { dashboardProfileBlack, plus } from "../../assets";
 import AlertBox from "../../components/AlertBox";
 import Button from "../../components/Button";
+import Caption from "../../components/Caption";
 import FormGroup from "../../components/FormGroup";
 import Spacer from "../../components/Spacer";
-import { getChildren, getProfile, updateProfile } from "../../redux/actions";
+import Modal from "../../components/Modal";
+import {
+  getChildren,
+  getProfile,
+  updateProfile,
+  removeChild,
+  setTempChildId,
+} from "../../redux/actions";
 import { formDataToJSON } from "../../utils";
 
 const Wrapper = styled.div`
@@ -78,7 +86,7 @@ const Tabs = styled.div`
 
     .tabLink {
       width: 50%;
-      font-size: 10px;
+      font-size: 12px;
       line-height: normal;
       padding: 1.2rem 0;
       text-align: center;
@@ -143,7 +151,6 @@ const Profile = (props) => {
   const [success, setSuccess] = useState(false);
 
   const showSuccessAlert = (msg = "...", _success = false) => {
-    // e.preventDefault();
     setSuccess(_success);
     setAlertText(msg);
 
@@ -167,6 +174,26 @@ const Profile = (props) => {
     if (res && res.status === "success") {
       setLoading(false);
       showSuccessAlert(res.message, true);
+    } else if (res && res.status === "error") {
+      setLoading(false);
+      showSuccessAlert(res.message, false);
+    } else {
+      setLoading(false);
+      showSuccessAlert("Something went wrong", false);
+    }
+  };
+
+  const handleRemoveChild = async () => {
+    setLoading(true);
+
+    let res = await removeChild(props.temp_child_id);
+
+    if (res && res.status === "success") {
+      setLoading(false);
+      showSuccessAlert(res.message, true);
+      setTimeout(() => {
+        window.location.replace("/dashboard/profile/children");
+      }, 3000);
     } else if (res && res.status === "error") {
       setLoading(false);
       showSuccessAlert(res.message, false);
@@ -203,10 +230,10 @@ const Profile = (props) => {
           <NavLink
             className="tabLink"
             exact
-            to="/dashboard/profile/add-child"
+            to="/dashboard/profile/children"
             activeClassName="active"
           >
-            <span>Add child</span>
+            <span>Children</span>
             <div className="activeBar"></div>
           </NavLink>
         </Tabs>
@@ -227,9 +254,9 @@ const Profile = (props) => {
             <FormGroup
               fieldStyle="shortText"
               inputType="email"
-              name="email_address"
+              name="email"
               placeholder="Email address"
-              defaultValue="natashadibie@gmail.com"
+              defaultValue={props.user.email}
             />
             <Spacer y={2.4} />
             <FormGroup
@@ -249,15 +276,6 @@ const Profile = (props) => {
               defaultValue={props.user.address}
               required
             />
-            {/* <Spacer y={2.4} />
-            <FormGroup
-              className="password"
-              fieldStyle="shortText"
-              inputType="password"
-              name="password"
-              placeholder="Password"
-              defaultValue="shabalaba"
-            /> */}
             <Spacer y={4.8} />
             <Button
               text={loading ? "..." : "Save changes"}
@@ -268,18 +286,19 @@ const Profile = (props) => {
           </form>
         </Route>
 
-        {/* Add child */}
-        <Route path="/dashboard/profile/add-child">
+        {/* Children */}
+        <Route path="/dashboard/profile/children">
           <AddAnother
             as="a"
-            href="/add-child?redirect=/dashboard/profile/add-child"
+            href="/add-child?redirect=/dashboard/profile/children"
           >
             <img src={plus} alt="Plus" className="plusIcon" />
             <Spacer x={1.2} />
             <span>Add another child</span>
           </AddAnother>
           <Spacer y={3.6} />
-          {props.children.length &&
+          {props.children &&
+            props.children.length &&
             props.children.map((child, index) => (
               <div key={`child_${index + 1}`}>
                 <Child>
@@ -292,11 +311,48 @@ const Profile = (props) => {
                     <Spacer x={1.2} />
                     <span>{child.name}</span>
                   </div>
-                  <button className="remove">remove</button>
+                  <Link
+                    to="/dashboard/profile/children/remove-child"
+                    className="remove"
+                    onClick={() => props.setTempChildId(child.id)}
+                  >
+                    remove
+                  </Link>
                 </Child>
                 <Spacer y={2.4} />
               </div>
             ))}
+        </Route>
+
+        {/* Remove child confirmation */}
+        <Route path="/dashboard/profile/children/remove-child">
+          <Modal>
+            <div className="inner">
+              <Spacer y={4.8} />
+              <Caption
+                heading={`Are you sure you want\nto remove this child?`}
+                subHeading={`This action cannot be undone`}
+                align="center"
+                fullWidth
+              />
+              <Spacer y={4.8} />
+              <div className="actionBtns">
+                <Link
+                  to="/dashboard/profile/children"
+                  className="btn secondary"
+                >
+                  Cancel
+                </Link>
+                <button
+                  className={`btn primary ${loading ? "disabled" : ""}`}
+                  onClick={handleRemoveChild}
+                  disabled={loading ? true : false}
+                >
+                  {loading ? "..." : "Remove"}
+                </button>
+              </div>
+            </div>
+          </Modal>
         </Route>
       </Wrapper>
       <Spacer y={3.6} />
@@ -308,7 +364,14 @@ const mapStateToProps = (state) => {
   return {
     user: state.user,
     children: state.children,
+    temp_child_id: state.temp_child_id,
   };
 };
 
-export default connect(mapStateToProps)(Profile);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setTempChildId: (id) => dispatch(setTempChildId(id)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Profile);

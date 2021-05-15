@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useHistory, useLocation, useParams } from "react-router";
+import { useState } from "react";
+import { useHistory, useLocation } from "react-router";
 import styled from "styled-components";
 import { plus } from "../assets";
 import AlertBox from "../components/AlertBox";
@@ -33,10 +33,9 @@ function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
 
-const AddChild = (props) => {
+const AddChild = () => {
   const query = useQuery();
   const history = useHistory();
-  const { match } = useParams();
   const [loading, setLoading] = useState(false);
   const [addMore, setAddMore] = useState(false);
   const [alertText, setAlertText] = useState("");
@@ -128,30 +127,6 @@ const AddChild = (props) => {
           name="age"
           placeholder="Child age"
         />
-        {/* <FormGroup
-          fieldStyle="dropdown"
-          name="age"
-          placeholder="Child age"
-          options={[
-            "1yr",
-            "2yrs",
-            "3yrs",
-            "4yrs",
-            "5yrs",
-            "6yrs",
-            "7yrs",
-            "8yrs",
-            "9yrs",
-            "10yrs",
-            "11yrs",
-            "12yrs",
-            "13yrs",
-            "14yrs",
-            "15yrs",
-            "16yrs",
-            "17yrs",
-          ]}
-        /> */}
         <Spacer y={2.4} />
         <FormGroup
           fieldStyle="dropdown"

@@ -18,7 +18,7 @@ const Box = styled.div`
   opacity: 0;
   pointer-events: none;
   transition: all 250ms ease-in;
-  z-index: 10;
+  z-index: 15;
 
   &.show {
     top: 4.8rem;
