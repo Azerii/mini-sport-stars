@@ -8,6 +8,7 @@ import {
   SET_ADMIN_TOKEN,
   SET_TRANSACTIONS,
   SET_TEMP_CHILD_ID,
+  SET_FEED,
 } from "../actions/types";
 
 export const initialState = {
@@ -20,6 +21,7 @@ export const initialState = {
   current_event: "",
   temp_activity: "",
   temp_child_id: null,
+  feed: [],
 };
 
 export default function rootReducer(state = initialState, action) {
@@ -63,6 +65,11 @@ export default function rootReducer(state = initialState, action) {
       return {
         ...state,
         temp_child_id: action.payload,
+      };
+    case SET_FEED:
+      return {
+        ...state,
+        feed: action.payload,
       };
     case SET_TRANSACTIONS:
       return {

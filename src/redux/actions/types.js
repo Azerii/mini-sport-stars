@@ -5,6 +5,7 @@ export const SET_EVENT = "SET_EVENT";
 export const SET_TEMP_CHILDREN = "SET_TEMP_CHILDREN";
 export const SET_TEMP_ACTIVITY = "SET_TEMP_ACTIVITY";
 export const SET_TEMP_CHILD_ID = "SET_TEMP_CHILD_ID";
+export const SET_FEED = "SET_FEED";
 
 // admin
 export const SET_ADMIN_TOKEN = "SET_ADMIN_TOKEN";

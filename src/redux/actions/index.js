@@ -10,6 +10,7 @@ import {
   SET_ADMIN_TOKEN,
   SET_TRANSACTIONS,
   SET_TEMP_CHILD_ID,
+  SET_FEED,
 } from "./types";
 import { api_host } from "../../utils";
 
@@ -130,6 +131,22 @@ export const updateProfile = async (data) => {
   }
 };
 
+export const getFeed = async () => {
+  const token = store.getState().token;
+
+  try {
+    const res = await axios.get(`${api_host}/get_transactions`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (res && res.data.status === "success") {
+      dispatch(setFeed(res.data.data));
+    }
+  } catch (e) {
+    console.log(e.message);
+  }
+};
+
 export const setToken = (token) => (dispatch) => {
   dispatch({
     type: SET_TOKEN,
@@ -176,6 +193,13 @@ export const setTempChildId = (id) => (dispatch) => {
   dispatch({
     type: SET_TEMP_CHILD_ID,
     payload: id,
+  });
+};
+
+export const setFeed = (data) => (dispatch) => {
+  dispatch({
+    type: SET_FEED,
+    payload: data,
   });
 };
 
