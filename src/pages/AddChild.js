@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useHistory } from "react-router";
+import { useEffect, useState } from "react";
+import { useHistory, useLocation, useParams } from "react-router";
 import styled from "styled-components";
 import { plus } from "../assets";
 import AlertBox from "../components/AlertBox";
@@ -29,8 +29,14 @@ const AddAnother = styled.button`
   }
 `;
 
-const AddChild = () => {
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
+
+const AddChild = (props) => {
+  const query = useQuery();
   const history = useHistory();
+  const { match } = useParams();
   const [loading, setLoading] = useState(false);
   const [addMore, setAddMore] = useState(false);
   const [alertText, setAlertText] = useState("");
@@ -69,7 +75,7 @@ const AddChild = () => {
 
     if (res && res.status === "success") {
       setLoading(false);
-      document.querySelector(".alertBox").classList.add("show");
+      showSuccessAlert("Child saved successfully", true);
       if (addMore) {
         setTimeout(() => {
           showSuccessAlert("Child saved successfully", true);
@@ -77,7 +83,10 @@ const AddChild = () => {
         }, 3000);
       } else {
         setTimeout(() => {
-          history.push("/terms-and-conditions");
+          let redirect_url = query.get("redirect");
+          redirect_url
+            ? history.push(`${redirect_url}`)
+            : history.push("/terms-and-conditions");
         }, 3000);
       }
     } else if (res && res.status === "error") {

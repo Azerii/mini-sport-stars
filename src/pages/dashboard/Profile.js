@@ -270,7 +270,10 @@ const Profile = (props) => {
 
         {/* Add child */}
         <Route path="/dashboard/profile/add-child">
-          <AddAnother as="a" href="/add-child" onClick={showSuccessAlert}>
+          <AddAnother
+            as="a"
+            href="/add-child?redirect=/dashboard/profile/add-child"
+          >
             <img src={plus} alt="Plus" className="plusIcon" />
             <Spacer x={1.2} />
             <span>Add another child</span>
