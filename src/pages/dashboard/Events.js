@@ -207,6 +207,18 @@ const activities = {
       price: 30,
     },
     {
+      activity: "2 days",
+      price: 60,
+    },
+    {
+      activity: "3 days",
+      price: 90,
+    },
+    {
+      activity: "4 days",
+      price: 115,
+    },
+    {
       activity: "5 days",
       price: 140,
     },
