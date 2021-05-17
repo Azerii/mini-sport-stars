@@ -230,6 +230,9 @@ const activityPrices = {
   "year 2 / year 3 football": 8,
   "year 4 / year 5 / year 6 football": 8,
   "single day": 30,
+  "2 days": 60,
+  "3 days": 90,
+  "4 days": 115,
   "5 days": 140,
 };
 
