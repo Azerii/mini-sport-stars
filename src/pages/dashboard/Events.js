@@ -15,7 +15,7 @@ import {
   trialDays,
 } from "../../assets";
 import { useEffect, useState } from "react";
-import { Route } from "react-router";
+import { Route, useLocation } from "react-router";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import {
@@ -26,6 +26,7 @@ import {
 } from "../../redux/actions";
 import axios from "axios";
 import { store } from "../../redux/store";
+import AlertBox from "../../components/AlertBox";
 
 const Wrapper = styled.div`
   display: grid;
@@ -253,10 +254,17 @@ const Event = ({ href, imgSrc, title, desc, setEvent }) => {
   );
 };
 
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
+
 const Events = (props) => {
+  const query = useQuery();
   const [events] = useState(tempEvents);
   const [btnActive, setBtnActive] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [alertText, setAlertText] = useState("");
+  const [success, setSuccess] = useState(false);
 
   const current_event_check = (title__) => {
     const title = title__.toLowerCase();
@@ -358,14 +366,42 @@ const Events = (props) => {
     window.location.replace(target);
   };
 
+  const showPaymentSuccessAlert = () => {
+    const status = query.get("payment_status");
+
+    if (!status) {
+      return;
+    }
+
+    if (status === "success") {
+      setSuccess(true);
+      setAlertText("Your payment was received successfully");
+      document.querySelector(".alertBox").classList.add("show");
+      setTimeout(
+        () => document.querySelector(".alertBox").classList.remove("show"),
+        3000
+      );
+    } else {
+      setSuccess(false);
+      setAlertText("Payment failed. Please try again in a few minutes.");
+      document.querySelector(".alertBox").classList.add("show");
+      setTimeout(
+        () => document.querySelector(".alertBox").classList.remove("show"),
+        3000
+      );
+    }
+  };
+
   useEffect(() => {
     getChildren();
+    showPaymentSuccessAlert();
     // eslint-disable-next-line
   }, []);
 
   return (
     <>
       <Spacer y={4.8} />
+      <AlertBox className="alertBox" success={success} text={alertText} />
       <Wrapper>
         {!events.length && (
           <NoEvents>

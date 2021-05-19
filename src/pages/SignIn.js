@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useHistory } from "react-router";
+// import { useHistory } from "react-router";
 import AuthWrapper from "../components/AuthWrapper";
 import Button from "../components/Button";
 import Caption from "../components/Caption";
@@ -11,7 +11,7 @@ import { loginUser } from "../redux/actions";
 import { formDataToJSON } from "../utils";
 
 const SignIn = () => {
-  const history = useHistory();
+  // const history = useHistory();
   const [loading, setLoading] = useState(false);
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,7 +25,7 @@ const SignIn = () => {
 
     if (res && res.status === "success") {
       setLoading(false);
-      history.push("/");
+      window.location.replace("/");
     } else if (res && res.status === "error") {
       setLoading(false);
       alert(res.message);

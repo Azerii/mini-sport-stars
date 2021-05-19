@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 const Box = styled.div`
   display: flex;
   align-items: center;
-  padding-left: 2.2rem;
+  padding: 0 2.4rem;
   min-width: 34.2rem;
   height: 6.5rem;
   border-left: 8px solid ${(props) => (props.success ? "#00ba88" : "#e12853")};
