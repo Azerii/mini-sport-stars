@@ -368,7 +368,7 @@ const Events = (props) => {
 
   const showPaymentSuccessAlert = () => {
     const status = query.get("payment_status");
-
+    console.log(new URLSearchParams(useLocation().search));
     if (!status) {
       return;
     }
