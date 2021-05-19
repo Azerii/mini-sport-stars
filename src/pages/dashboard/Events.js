@@ -368,7 +368,7 @@ const Events = (props) => {
 
   const showPaymentSuccessAlert = () => {
     const status = query.get("payment_status");
-    console.log(new URLSearchParams(useLocation().search));
+
     if (!status) {
       return;
     }
@@ -381,15 +381,11 @@ const Events = (props) => {
       setSuccess(false);
       setAlertText("Payment failed. Please try again in a few minutes.");
       document.querySelector(".alertBox").classList.add("show");
-      // setTimeout(
-      //   () => document.querySelector(".alertBox").classList.remove("show"),
-      //   3000
-      // );
     }
 
     setTimeout(
       () => document.querySelector(".alertBox").classList.remove("show"),
-      3000
+      30000
     );
   };
 
