@@ -377,19 +377,20 @@ const Events = (props) => {
       setSuccess(true);
       setAlertText("Your payment was received successfully");
       document.querySelector(".alertBox").classList.add("show");
-      setTimeout(
-        () => document.querySelector(".alertBox").classList.remove("show"),
-        3000
-      );
     } else {
       setSuccess(false);
       setAlertText("Payment failed. Please try again in a few minutes.");
       document.querySelector(".alertBox").classList.add("show");
-      setTimeout(
-        () => document.querySelector(".alertBox").classList.remove("show"),
-        3000
-      );
+      // setTimeout(
+      //   () => document.querySelector(".alertBox").classList.remove("show"),
+      //   3000
+      // );
     }
+
+    setTimeout(
+      () => document.querySelector(".alertBox").classList.remove("show"),
+      3000
+    );
   };
 
   useEffect(() => {
