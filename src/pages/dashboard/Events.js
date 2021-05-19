@@ -383,10 +383,10 @@ const Events = (props) => {
       document.querySelector(".alertBox").classList.add("show");
     }
 
-    setTimeout(
-      () => document.querySelector(".alertBox").classList.remove("show"),
-      30000
-    );
+    // setTimeout(
+    //   () => document.querySelector(".alertBox").classList.remove("show"),
+    //   30000
+    // );
   };
 
   useEffect(() => {
