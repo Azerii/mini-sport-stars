@@ -367,7 +367,7 @@ const Events = (props) => {
   };
 
   const showPaymentSuccessAlert = () => {
-    const status = query.get("payment_status");
+    let status = query.get("payment_status");
 
     if (!status) {
       return;
@@ -376,17 +376,20 @@ const Events = (props) => {
     if (status === "success") {
       setSuccess(true);
       setAlertText("Your payment was received successfully");
-      document.querySelector(".alertBox").classList.add("show");
-    } else {
+      document.querySelector(".alertBox").classList.add("success");
+    } else if (status === "failure") {
       setSuccess(false);
       setAlertText("Payment failed. Please try again in a few minutes.");
-      document.querySelector(".alertBox").classList.add("show");
+      document.querySelector(".alertBox").classList.add("failure");
+    } else {
+      return;
     }
 
-    // setTimeout(
-    //   () => document.querySelector(".alertBox").classList.remove("show"),
-    //   30000
-    // );
+    document.querySelector(".alertBox").classList.add("show");
+    setTimeout(
+      () => document.querySelector(".alertBox").classList.remove("show"),
+      3000
+    );
   };
 
   useEffect(() => {
